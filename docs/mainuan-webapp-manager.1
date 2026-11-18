@@ -1,0 +1,23 @@
+.TH MAINUAN-WEBAPP-MANAGER 1 "March 2026" "Mainuan Linux" "User Commands"
+.SH NAME
+mainuan-webapp-manager \- Create and manage isolated Web Applications (SSBs)
+.SH SYNOPSIS
+.B mainuan-webapp-manager
+.SH DESCRIPTION
+.B mainuan-webapp-manager
+is an elegant, lightweight Site Specific Browser (SSB) engine tailored for Mainuan Linux. It effortlessly turns any website into a standalone, desktop-integrated application utilizing isolated browser profiles for maximum privacy and separation from your primary web session.
+.PP
+The application provides a graphical interface (GTK+ 3) to configure your webapps, download their icons dynamically (using DuckDuckGo's favicon API), and map them to standard standard Linux desktop entries.
+.PP
+By default, each WebApp is fully sandboxed in \fI~/.local/share/mainuan-webapps/\fR avoiding cross-contamination with your personal web browsing.
+.SH OPTIONS
+.B mainuan-webapp-manager
+does not accept command-line options. It is a strictly graphical application.
+.SH AUTHORS
+.B David Caixinha
+.SH COPYRIGHT
+Copyright \(co 2026 David Caixinha.
+License: GPL-3.0+. This is free software: you are free to change and redistribute it. There is NO WARRANTY, to the extent permitted by law.
+.SH SEE ALSO
+.BR gtk3 (1),
+.BR firefox (1)

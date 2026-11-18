@@ -1,0 +1,325 @@
+/* Dark Theme for Mainuan Repo Selector - GTK3 CSS - Refined */
+
+/* Define Mainuan brand colors */
+@define-color mainuan_accent #0ac5d0;
+@define-color mainuan_accent_hover #3dd6df;
+@define-color mainuan_dark_bg #2b2b2b;
+@define-color mainuan_darker_bg #1e1e1e;
+@define-color mainuan_light_text #ffffff;
+@define-color mainuan_border #3c3c3c;
+@define-color mainuan_error #e74c3c;
+
+/* Override theme colors globally */
+@define-color theme_bg_color @mainuan_dark_bg;
+@define-color theme_fg_color @mainuan_light_text;
+@define-color theme_base_color @mainuan_darker_bg;
+@define-color theme_selected_bg_color @mainuan_accent;
+@define-color theme_selected_fg_color #000000;
+@define-color borders @mainuan_border;
+
+/* Application Window */
+window {
+    background-color: @mainuan_dark_bg;
+    color: @mainuan_light_text;
+}
+
+/* Dialog Styling - Fix for KDE Plasma white dialogs */
+dialog,
+messagedialog {
+    background-color: @mainuan_dark_bg;
+    color: @mainuan_light_text;
+}
+
+dialog .background,
+messagedialog .background {
+    background-color: @mainuan_dark_bg;
+    color: @mainuan_light_text;
+}
+
+dialog>box,
+messagedialog>box {
+    background-color: @mainuan_dark_bg;
+}
+
+.dialog-action-area {
+    background-color: @mainuan_dark_bg;
+}
+
+.dialog-content-area {
+    background-color: @mainuan_dark_bg;
+    color: @mainuan_light_text;
+}
+
+/* FileChooserDialog Styling - Fix for white background in KDE Plasma */
+filechooserdialog,
+filechooser {
+    background-color: @mainuan_dark_bg;
+    color: @mainuan_light_text;
+}
+
+filechooser .background {
+    background-color: @mainuan_dark_bg;
+}
+
+filechooser placessidebar {
+    background-color: @mainuan_darker_bg;
+    color: @mainuan_light_text;
+}
+
+filechooser placessidebar row {
+    background-color: @mainuan_darker_bg;
+    color: @mainuan_light_text;
+}
+
+filechooser placessidebar row:selected {
+    background-color: @mainuan_accent;
+    color: @mainuan_light_text;
+}
+
+filechooser pathbar {
+    background-color: @mainuan_darker_bg;
+    color: @mainuan_light_text;
+}
+
+filechooser treeview,
+filechooser treeview.view {
+    background-color: @mainuan_dark_bg;
+    color: @mainuan_light_text;
+}
+
+filechooser entry {
+    background-color: @mainuan_darker_bg;
+    color: @mainuan_light_text;
+    border-color: @mainuan_border;
+}
+
+/* HeaderBar Styling - Fix for "horrible" buttons */
+headerbar,
+headerbar:backdrop,
+.titlebar,
+.titlebar:backdrop {
+    background-color: @mainuan_darker_bg;
+    color: @mainuan_light_text;
+    border-bottom: 1px solid @mainuan_border;
+    box-shadow: none;
+    min-height: 46px;
+}
+
+headerbar button.titlebutton {
+    color: @mainuan_light_text;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 6px;
+    border-radius: 4px;
+}
+
+headerbar button.titlebutton:hover {
+    background-color: #444444;
+    color: @mainuan_light_text;
+}
+
+headerbar button.titlebutton.close:hover {
+    background-color: @mainuan_error;
+    color: white;
+}
+
+/* StackSwitcher — About dialog "Acerca de / Créditos" buttons
+   Higher specificity (0,0,2) beats base.css button {} (0,0,1) regardless of load order */
+stackswitcher button {
+    border-radius: 100px;
+    background-color: @mainuan_dark_bg;
+    background-image: none;
+    border: 1px solid @mainuan_border;
+    font-weight: normal;
+    padding: 4px 16px;
+    box-shadow: none;
+    color: @mainuan_light_text;
+}
+
+stackswitcher button:hover {
+    background-color: #444444;
+    border-color: @mainuan_accent;
+}
+
+stackswitcher button:checked {
+    background-color: #444444;
+}
+
+/* Notebook (Tabs) Styling - Aggressive Overrides */
+notebook {
+    background-color: @mainuan_darker_bg;
+    border: 1px solid @mainuan_border;
+}
+
+notebook>header {
+    background-color: @mainuan_darker_bg;
+    border: none;
+    box-shadow: none;
+}
+
+notebook>header tabs {
+    background-color: transparent;
+    border: none;
+    margin: 0;
+    padding: 0;
+}
+
+/* Tab Styling */
+notebook>header tab {
+    background-color: #1a1a1a;
+    color: #cccccc;
+    border: 1px solid @mainuan_border;
+    border-bottom: none;
+    margin: 0 2px 0 0;
+    padding: 8px 20px;
+    border-radius: 4px 4px 0 0;
+    box-shadow: none;
+    outline: none;
+}
+
+/* Hover State */
+notebook>header tab:hover {
+    background-color: #333333;
+    color: @mainuan_light_text;
+    box-shadow: none;
+}
+
+/* Checked/Active State - Force Accent Border */
+notebook>header tab:checked {
+    background-color: @mainuan_dark_bg;
+    color: @mainuan_accent;
+    border-top: 3px solid @mainuan_accent;
+    /* Top highlight */
+    border-left: 1px solid @mainuan_border;
+    border-right: 1px solid @mainuan_border;
+    border-bottom: none;
+    box-shadow: none;
+}
+
+/* Remove any focus rings or outlines */
+notebook>header tab:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+/* Content Area */
+notebook>stack {
+    background-color: @mainuan_dark_bg;
+    border: 1px solid @mainuan_border;
+    border-top: none;
+    /* Seamless connection with tabs */
+}
+
+/* Buttons */
+button {
+    background-image: none;
+    background-color: #333333;
+    color: @mainuan_light_text;
+    border: 1px solid @mainuan_border;
+    border-radius: 4px;
+    padding: 8px 16px;
+    box-shadow: none;
+    text-shadow: none;
+}
+
+button:hover {
+    background-color: #444444;
+    border-color: @mainuan_accent;
+    color: @mainuan_light_text;
+}
+
+button:active {
+    background-color: @mainuan_accent;
+    color: #000000;
+}
+
+/* Suggested Action (Accent) */
+button.suggested-action {
+    background-color: @mainuan_accent;
+    color: #000000;
+    border: 1px solid @mainuan_accent_hover;
+    font-weight: bold;
+}
+
+button.suggested-action:hover {
+    background-color: @mainuan_accent_hover;
+    border-color: @mainuan_accent_hover;
+}
+
+/* Destructive Action (Red) */
+button.destructive-action {
+    background-color: @mainuan_error;
+    color: #ffffff;
+    border: 1px solid #c0392b;
+}
+
+button.destructive-action:hover {
+    background-color: #ff6b6b;
+    border-color: #ff6b6b;
+}
+
+/* Labels */
+label {
+    color: @mainuan_light_text;
+    text-shadow: none;
+}
+
+/* Progress Bar */
+progressbar trough {
+    background-color: @mainuan_darker_bg;
+    border: 1px solid @mainuan_border;
+    border-radius: 4px;
+}
+
+progressbar progress {
+    background-color: @mainuan_accent;
+    border-radius: 4px;
+    border: none;
+}
+
+/* Switch */
+switch {
+    background-color: #333333;
+    border: 1px solid @mainuan_border;
+    border-radius: 12px;
+}
+
+switch:checked {
+    background-color: @mainuan_accent;
+    border-color: @mainuan_accent;
+}
+
+switch slider {
+    background-color: #eeeeee;
+}
+
+/* Entry */
+entry {
+    background-color: @mainuan_darker_bg;
+    color: @mainuan_light_text;
+    border: 1px solid @mainuan_border;
+    box-shadow: none;
+}
+
+entry:focus {
+    border-color: @mainuan_accent;
+    box-shadow: none;
+}
+
+/* Scrolled Window */
+scrolledwindow viewport {
+    background-color: @mainuan_dark_bg;
+}
+
+/* Fix for blue lines in some themes */
+*:selected {
+    background-color: @mainuan_accent;
+    color: #000000;
+}
+
+/* Remove focus dotted lines */
+* {
+    outline-color: alpha(@mainuan_accent, 0.5);
+    outline-style: none;
+}

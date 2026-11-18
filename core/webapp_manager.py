@@ -1,0 +1,423 @@
+"""
+Web Application integration logic.
+Manages the creation, listing, and deletion of custom .desktop files
+and isolated browser profiles.
+"""
+
+import os
+import shutil
+import uuid
+import configparser
+from pathlib import Path
+from typing import Dict, List, Optional
+from urllib.parse import urlparse
+
+from .browser_manager import BrowserManager, Browser
+
+class WebApp:
+    """Represents an installed WebApp."""
+    def __init__(self, id_name: str, name: str, url: str, browser_id: str, icon_path: str, desktop_file: str, profile_path: str, show_navbar: bool = False, extra_params: str = "", is_incognito: bool = False):
+        self.id_name = id_name
+        self.name = name
+        self.url = url
+        self.browser_id = browser_id
+        self.icon_path = icon_path
+        self.desktop_file = desktop_file
+        self.profile_path = profile_path
+        self.show_navbar = show_navbar
+        self.extra_params = extra_params
+        self.is_incognito = is_incognito
+
+class WebAppManager:
+    def __init__(self, browser_manager: BrowserManager):
+        self.browser_manager = browser_manager
+        self.desktop_dir = Path.home() / ".local" / "share" / "applications"
+        self.profiles_dir = Path.home() / ".local" / "share" / "mainuan-webapps"
+        self.icons_dir = self.profiles_dir / "icons"
+        
+        self.desktop_dir.mkdir(parents=True, exist_ok=True)
+        self.profiles_dir.mkdir(parents=True, exist_ok=True)
+        self.icons_dir.mkdir(parents=True, exist_ok=True)
+
+    def list_webapps(self) -> List[WebApp]:
+        """List all installed mainuan webapps."""
+        webapps = []
+        for file in self.desktop_dir.glob("mainuan-webapp-*.desktop"):
+            config = configparser.ConfigParser(interpolation=None)
+            config.optionxform = str # Preserve case for reading correctly
+            try:
+                config.read(file)
+                if "Desktop Entry" in config:
+                    entry = config["Desktop Entry"]
+                    
+                    id_name = file.stem.replace("mainuan-webapp-", "")
+                    name = entry.get("Name", id_name)
+                    icon = entry.get("Icon", "")
+                    exec_cmd = entry.get("Exec", "")
+                    
+                    # Try to reconstruct the URL and browser from the Exec command
+                    url = ""
+                    browser_id = "unknown"
+                    profile_path = str(self.profiles_dir / id_name)
+                    
+                    # Basic heuristic to extract URL
+                    for part in exec_cmd.split():
+                        if part.startswith("http://") or part.startswith("https://"):
+                            url = part
+                            break
+                        elif part.startswith("--app="):
+                            url = part.replace("--app=", "")
+                            break
+                    
+                    # Find which browser corresponds
+                    for brw in self.browser_manager.get_browsers_list():
+                        if brw.executable in exec_cmd or (brw.is_flatpak and brw.flatpak_id in exec_cmd):
+                            browser_id = brw.id_name
+                            break
+                    
+                    # Read navbar state from custom field
+                    show_navbar_val = entry.get("X-Mainuan-Navbar", "false")
+                    show_navbar = show_navbar_val.lower() == "true"
+                    
+                    # Read extra params from custom field
+                    extra_params = entry.get("X-Mainuan-ExtraParams", "")
+                    
+                    # Read incognito state from custom field
+                    is_incognito_val = entry.get("X-Mainuan-Incognito", "false")
+                    is_incognito = is_incognito_val.lower() == "true"
+                    
+                    webapps.append(WebApp(id_name, name, url, browser_id, icon, str(file), profile_path, show_navbar, extra_params, is_incognito))
+            except Exception as e:
+                print(f"Error reading {file}: {e}")
+                
+        return webapps
+
+    def _persist_icon(self, id_name: str, icon_path: str) -> str:
+        """
+        Copies icon_path into the persistent icons directory so it survives
+        cache cleans. Returns the new persistent path, or the original if
+        the source is already inside the icons_dir or is a system icon name.
+        """
+        if not icon_path or not os.path.isabs(icon_path):
+            # System icon name (e.g. 'applications-internet') — keep as-is
+            return icon_path
+
+        src = Path(icon_path)
+        if not src.exists():
+            return icon_path
+
+        # Already stored persistently — nothing to do
+        if src.parent == self.icons_dir:
+            return icon_path
+
+        suffix = src.suffix or ".png"
+        dest = self.icons_dir / f"{id_name}{suffix}"
+        try:
+            shutil.copy2(str(src), str(dest))
+            return str(dest)
+        except Exception as e:
+            print(f"Warning: could not persist icon for {id_name}: {e}")
+            return icon_path
+
+    def delete_webapp(self, id_name: str) -> bool:
+        """Removes a webapp from the system."""
+        desktop_file = self.desktop_dir / f"mainuan-webapp-{id_name}.desktop"
+        profile_dir = self.profiles_dir / id_name
+        
+        success = True
+        try:
+            if desktop_file.exists():
+                desktop_file.unlink()
+        except:
+            success = False
+            
+        try:
+            # Also cleanup any compatibility symlinks
+            for sym in self.desktop_dir.glob("chrome-*.desktop"):
+                if sym.is_symlink() and str(sym.readlink()).endswith(f"mainuan-webapp-{id_name}.desktop"):
+                    sym.unlink()
+                    
+            if profile_dir.exists():
+                shutil.rmtree(profile_dir)
+        except:
+            success = False
+
+        # Remove persisted icon if it exists
+        try:
+            for ext in (".png", ".jpg", ".jpeg", ".svg", ".ico", ".webp"):
+                icon_file = self.icons_dir / f"{id_name}{ext}"
+                if icon_file.exists():
+                    icon_file.unlink()
+                    break
+        except Exception as e:
+            print(f"Warning: could not remove icon for {id_name}: {e}")
+            
+        return success
+
+    def _get_chrome_id(self, url: str) -> Optional[str]:
+        """Calculates the internal ID Chrome generates for a URL in --app mode."""
+        try:
+            parsed = urlparse(url)
+            host = parsed.netloc
+            if host:
+                # This matches the user's dbus-send: "chrome-web.whatsapp.com__-Default"
+                return f"chrome-{host}__-Default"
+        except:
+            pass
+        return None
+
+    def _manage_chrome_compat_links(self, id_name: str, url: str, browser_id: str):
+        """
+        KDE Plasma 6 (Wayland) often ignores --wayland-app-id and looks for a .desktop
+        matching an internal ID like 'chrome-host.com__-Default'.
+        We create a symlink with that name pointing to our mainuan-webapp-*.desktop.
+        """
+        # Only for Chrome-based browsers
+        if browser_id not in ["chrome", "chromium", "brave", "vivaldi", "edge"]:
+            return
+            
+        try:
+            chrome_id = self._get_chrome_id(url)
+            if not chrome_id:
+                return
+                
+            # Remove any existing symlinks for this specific webapp first
+            for sym in self.desktop_dir.glob("chrome-*.desktop"):
+                if sym.is_symlink() and str(sym.readlink()).endswith(f"mainuan-webapp-{id_name}.desktop"):
+                    sym.unlink()
+                    
+            compat_name = f"{chrome_id}.desktop"
+            target_name = f"mainuan-webapp-{id_name}.desktop"
+            compat_path = self.desktop_dir / compat_name
+            target_path = self.desktop_dir / target_name
+            
+            if target_path.exists() and not compat_path.exists():
+                os.symlink(target_path.name, compat_path)
+        except Exception as e:
+            print(f"Error creating compatibility symlink: {e}")
+
+    def update_webapp(self, id_name: str, new_name: str = None, new_icon: str = None, new_category: str = None, 
+                      new_url: str = None, new_browser_id: str = None, new_show_navbar: bool = None, 
+                      new_extra_params: str = None, new_is_incognito: bool = None) -> bool:
+        """Updates an existing webapp's .desktop file."""
+        desktop_file = self.desktop_dir / f"mainuan-webapp-{id_name}.desktop"
+        if not desktop_file.exists():
+            return False
+        
+        config = configparser.ConfigParser(interpolation=None)
+        config.optionxform = str  # IMPORTANT: Preserve case (Exec instead of exec)
+        config.read(desktop_file)
+        
+        if "Desktop Entry" not in config:
+            return False
+        
+        entry = config["Desktop Entry"]
+        
+        # Cleanup any lowercase keys from previous buggy version to avoid DuplicateOptionError later
+        standard_keys = ["Name", "Exec", "Icon", "Categories", "StartupWMClass", "Terminal", "Type", "Version", "Comment", "StartupNotify"]
+        for key in list(entry.keys()):
+            if key != "X-Mainuan-Navbar" and key.lower() in [k.lower() for k in standard_keys]:
+                if key not in standard_keys: # If it's not the exact standard casing, remove it
+                    del entry[key]
+
+        # StartupWMClass will be updated later once we know the browser
+        
+        if new_name:
+            entry["Name"] = new_name
+            entry["Comment"] = f"Mainuan WebApp for {new_name}"
+        if new_icon:
+            entry["Icon"] = new_icon
+        if new_category:
+            entry["Categories"] = f"{new_category};"
+            
+        # Extract current data if not provided
+        exec_cmd = entry.get("Exec", "")
+        # ... fallback for lowercase if it was already corrupted
+        if not exec_cmd:
+            exec_cmd = entry.get("exec", "")
+            
+        current_url = ""
+        current_browser_id = "unknown"
+        
+        for part in exec_cmd.split():
+            if part.startswith("http://") or part.startswith("https://"):
+                current_url = part
+                break
+            elif part.startswith("--app="):
+                current_url = part.replace("--app=", "")
+                break
+        
+        for brw in self.browser_manager.get_browsers_list():
+            if brw.executable in exec_cmd or (brw.is_flatpak and brw.flatpak_id in exec_cmd):
+                current_browser_id = brw.id_name
+                break
+        
+        url = new_url if new_url is not None else current_url
+        browser_id = new_browser_id if new_browser_id is not None else current_browser_id
+        
+        # Align StartupWMClass for Wayland compatibility
+        if browser_id in ["chrome", "chromium", "brave", "vivaldi", "edge"]:
+            chrome_id = self._get_chrome_id(url)
+            entry["StartupWMClass"] = chrome_id if chrome_id else f"mainuan-webapp-{id_name}"
+        else:
+            entry["StartupWMClass"] = f"mainuan-webapp-{id_name}"
+        
+        # Extra parameters
+        if new_extra_params is not None:
+            extra_params = new_extra_params
+        else:
+            extra_params = entry.get("X-Mainuan-ExtraParams", "")
+            
+        # Save extra params state in custom field
+        entry["X-Mainuan-ExtraParams"] = extra_params
+        
+        # Determine show_navbar
+        if new_show_navbar is not None:
+            show_navbar = new_show_navbar
+        else:
+            # Try to read from X-Mainuan-Navbar first, fallback to heuristic
+            show_navbar_val = entry.get("X-Mainuan-Navbar", "")
+            if show_navbar_val:
+                show_navbar = show_navbar_val.lower() == "true"
+            else:
+                show_navbar = "--nav" in exec_cmd or "userChrome.css" not in exec_cmd
+        
+        # Save navbar state in custom field
+        entry["X-Mainuan-Navbar"] = "true" if show_navbar else "false"
+        
+        # Determine is_incognito
+        if new_is_incognito is not None:
+            is_incognito = new_is_incognito
+        else:
+            is_incognito_val = entry.get("X-Mainuan-Incognito", "false")
+            is_incognito = is_incognito_val.lower() == "true"
+            
+        # Save incognito state in custom field
+        entry["X-Mainuan-Incognito"] = "true" if is_incognito else "false"
+            
+        if url and browser_id != "unknown":
+            browser = self.browser_manager.get_browser(browser_id)
+            if browser:
+                profile_path = self.profiles_dir / id_name
+                class_name = f"mainuan-webapp-{id_name}"
+                if browser.id_name in ["firefox", "librewolf"]:
+                    self._setup_firefox_profile(str(profile_path), show_navbar)
+                entry["Exec"] = browser.get_launch_command(url, str(profile_path), class_name, show_navbar, extra_params, is_incognito)
+        
+        with open(desktop_file, 'w') as f:
+            # IMPORTANT: space_around_delimiters=False for .desktop compliance
+            config.write(f, space_around_delimiters=False)
+        
+        os.chmod(desktop_file, 0o755)
+        
+        os.system("update-desktop-database ~/.local/share/applications 2>/dev/null")
+        return True
+
+
+    def create_webapp(self, name: str, url: str, icon_path: str, category: str, browser_id: str, 
+                      show_navbar: bool = False, extra_params: str = "", is_incognito: bool = False) -> Optional[WebApp]:
+        """Creates a new webapp."""
+        browser = self.browser_manager.get_browser(browser_id)
+        if not browser:
+            print(f"Browser {browser_id} not found.")
+            return None
+            
+        # Generate a safe unique ID
+        safe_name = "".join(c for c in name if c.isalnum() or c in (' ', '-', '_')).strip()
+        safe_name = safe_name.replace(" ", "-").lower()
+        id_name = f"{safe_name}-{str(uuid.uuid4())[:6]}"
+        
+        profile_path = self.profiles_dir / id_name
+        profile_path.mkdir(parents=True, exist_ok=True)
+        
+        # Specific browser profile setup (Firefox needs userChrome.css to act like an SSB)
+        if browser.id_name in ["firefox", "librewolf", "firefox-flatpak"]:
+            self._setup_firefox_profile(str(profile_path), show_navbar)
+            
+        class_name = f"mainuan-webapp-{id_name}"
+        
+        # Determine StartupWMClass for Wayland compatibility
+        if browser_id in ["chrome", "chromium", "brave", "vivaldi", "edge"]:
+            chrome_id = self._get_chrome_id(url)
+            startup_class = chrome_id if chrome_id else class_name
+        else:
+            startup_class = class_name
+            
+        exec_cmd = browser.get_launch_command(url, str(profile_path), class_name, show_navbar, extra_params, is_incognito)
+        
+        desktop_file = self.desktop_dir / f"mainuan-webapp-{id_name}.desktop"
+
+        # Persist the icon to a stable location so it survives cache cleans
+        persistent_icon = self._persist_icon(id_name, icon_path)
+
+        desktop_content = f"""[Desktop Entry]
+Version=1.0
+Name={name}
+Comment=Mainuan WebApp for {name}
+Exec={exec_cmd}
+Terminal=false
+X-MultipleArgs=false
+Type=Application
+Icon={persistent_icon}
+Categories={category};
+StartupWMClass={startup_class}
+StartupNotify=true
+X-Mainuan-Navbar={"true" if show_navbar else "false"}
+X-Mainuan-ExtraParams={extra_params}
+X-Mainuan-Incognito={"true" if is_incognito else "false"}
+"""
+
+        with open(desktop_file, 'w') as f:
+            f.write(desktop_content)
+            
+        # Make the desktop file executable
+        os.chmod(desktop_file, 0o755)
+        
+        os.system("update-desktop-database ~/.local/share/applications 2>/dev/null")
+        
+        return WebApp(id_name, name, url, browser_id, persistent_icon, str(desktop_file), str(profile_path), show_navbar, extra_params, is_incognito)
+
+    def _setup_firefox_profile(self, profile_path: str, show_navbar: bool):
+        """Creates user.js and userChrome.css to strip UI from Firefox."""
+        chrome_dir = os.path.join(profile_path, "chrome")
+        os.makedirs(chrome_dir, exist_ok=True)
+        
+        user_js_path = os.path.join(profile_path, "user.js")
+        user_chrome_path = os.path.join(chrome_dir, "userChrome.css")
+        
+        # user.js to disable telemetry and enable custom chrome
+        user_js = """
+// Enable custom CSS
+user_pref("toolkit.legacyUserProfileCustomizations.stylesheets", true);
+// Disable default browser checks
+user_pref("browser.shell.checkDefaultBrowser", false);
+user_pref("browser.tabs.warnOnClose", false);
+// Session restore and privacy
+user_pref("browser.startup.page", 3);
+// Block telemetry
+user_pref("datareporting.healthreport.uploadEnabled", false);
+user_pref("datareporting.policy.dataSubmissionEnabled", false);
+// Force system titlebar to show window controls (since tabs are hidden)
+user_pref("browser.tabs.drawInTitlebar", false);
+user_pref("browser.tabs.inTitlebar", 0);
+"""
+        with open(user_js_path, "w") as f:
+            f.write(user_js)
+            
+        # CSS to hide Firefox UI elements
+        user_chrome = """
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+/* Hide tabs bar */
+#TabsToolbar { visibility: collapse !important; }
+/* Hide sidebar header */
+#sidebar-header { visibility: collapse !important; }
+"""
+        if not show_navbar:
+            user_chrome += """
+/* Hide Navigation bar */
+#nav-bar { visibility: collapse !important; }
+/* Hide Bookmarks bar */
+#PersonalToolbar { visibility: collapse !important; }
+"""
+        with open(user_chrome_path, "w") as f:
+            f.write(user_chrome)

@@ -1,0 +1,195 @@
+# Romanian translations for PACKAGE package.
+# Copyright (C) 2026 THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# Automatically generated, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-10 16:10+0100\n"
+"PO-Revision-Date: 2026-03-04 13:00+0100\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: ro\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < "
+"20)) ? 1 : 2;\n"
+
+#: main.py:60
+msgid "Starting Mainuan WebApp Manager..."
+msgstr "Pornire Manager WebApp Mainuan..."
+
+#: ui/main_window.py:118
+msgid "Add WebApp"
+msgstr "Adăugare WebApp"
+
+#: ui/main_window.py:125
+msgid "Remove WebApp"
+msgstr "Eliminare WebApp"
+
+#: ui/main_window.py:150
+msgid ""
+"No WebApps installed.\n"
+"Click the '+' button to add one."
+msgstr ""
+"Niciun WebApp instalat.\n"
+"Faceți clic pe butonul '+' pentru a adăuga unul."
+
+#: ui/main_window.py:213
+msgid "Edit WebApp"
+msgstr "Editează aplicația Web"
+
+#: ui/main_window.py:235 ui/dialogs/add_webapp_dialog.py:35
+msgid "Name:"
+msgstr "Nume:"
+
+#: ui/main_window.py:241 ui/dialogs/add_webapp_dialog.py:42
+msgid "Web Address:"
+msgstr "Adresă Web:"
+
+#: ui/main_window.py:256 ui/dialogs/add_webapp_dialog.py:47
+msgid "Select Icon"
+msgstr "Selectați pictograma"
+
+#: ui/main_window.py:259 ui/dialogs/add_webapp_dialog.py:143
+msgid "Select an icon"
+msgstr "Selectați o pictogramă"
+
+#: ui/main_window.py:268 ui/dialogs/add_webapp_dialog.py:153
+msgid "Images (PNG, SVG, JPG)"
+msgstr "Imagini (PNG, SVG, JPG)"
+
+#: ui/main_window.py:284 ui/dialogs/add_webapp_dialog.py:49
+msgid "Icon:"
+msgstr "Pictogramă:"
+
+#: ui/main_window.py:297 ui/dialogs/add_webapp_dialog.py:69
+msgid "Browser:"
+msgstr "Browser:"
+
+#: ui/main_window.py:304 ui/dialogs/add_webapp_dialog.py:76
+msgid "Navigation Bar:"
+msgstr "Bară de navigare:"
+
+#: ui/main_window.py:311 ui/dialogs/add_webapp_dialog.py:83
+msgid "Incognito Mode:"
+msgstr "Modo Incognito:"
+
+#: ui/main_window.py:317 ui/dialogs/add_webapp_dialog.py:89
+msgid "Extra Parameters:"
+msgstr "Parametri suplimentari:"
+
+#: ui/main_window.py:324 ui/dialogs/add_webapp_dialog.py:96
+msgid "Common Parameters Help"
+msgstr "Ajutor parametri comuni"
+
+#: ui/main_window.py:327 ui/dialogs/add_webapp_dialog.py:106
+msgid "Forces the WebApp to occupy the full screen at startup."
+msgstr "Forțează aplicația web să ocupe tot ecranul la pornire."
+
+#: ui/main_window.py:328 ui/dialogs/add_webapp_dialog.py:107
+msgid ""
+"Prevents floating bubbles when hovering over tabs (very useful in WebApp "
+"mode)."
+msgstr ""
+"Previne bulele plutitoare la trecerea mouse-ului peste file (foarte util în "
+"modul WebApp)."
+
+#: ui/main_window.py:329 ui/dialogs/add_webapp_dialog.py:108
+msgid ""
+"Forces the website to render in dark mode, even if not natively supported."
+msgstr ""
+"Forțează redarea site-ului web în modul întunecat, chiar dacă nu este "
+"acceptat nativ."
+
+#: ui/main_window.py:330 ui/dialogs/add_webapp_dialog.py:109
+msgid "Simulate a different browser or device."
+msgstr "Simulează un browser sau un dispozitiv diferit."
+
+#: ui/main_window.py:331 ui/dialogs/add_webapp_dialog.py:110
+msgid "Use a specific proxy for this WebApp."
+msgstr "Folosește un proxy specific pentru această aplicație web."
+
+#: ui/main_window.py:332 ui/dialogs/add_webapp_dialog.py:111
+msgid "Set a fixed window size."
+msgstr "Setează o dimensiune fixă a ferestrei."
+
+#: ui/main_window.py:333 ui/dialogs/add_webapp_dialog.py:112
+msgid "Disable all website notifications."
+msgstr "Dezactivează toate notificările site-ului web."
+
+#: ui/main_window.py:334 ui/dialogs/add_webapp_dialog.py:113
+msgid "Increase shared memory (useful for heavy apps in containers)."
+msgstr "Crește memoria partajată (util pentru aplicații grele în containere)."
+
+#: ui/main_window.py:341 ui/dialogs/add_webapp_dialog.py:121
+msgid "Browser Parameters Help"
+msgstr "Ajutor parametri browser"
+
+#: ui/main_window.py:385
+msgid "Are you sure you want to delete {}?"
+msgstr "Sigur doriți să ștergeți {}?"
+
+#: ui/main_window.py:387
+msgid "This will remove its .desktop file and the isolated browser profile."
+msgstr ""
+"Aceasta va elimina fișierul său .desktop și profilul de browser izolat."
+
+#: ui/dialogs/add_webapp_dialog.py:34
+msgid "e.g. YouTube"
+msgstr "ex. YouTube"
+
+#: ui/dialogs/add_webapp_dialog.py:59
+msgid "Category:"
+msgstr "Categorie:"
+
+#: ui/dialogs/add_webapp_dialog.py:88
+msgid "e.g. --start-maximized"
+msgstr "de ex. --start-maximized"
+
+#: main.py:81
+msgid "Shutting down Mainuan WebApp Manager..."
+msgstr "Închiderea Managerului WebApp Mainuan..."
+
+#: main.py:96
+msgid "Cleanup warning: {}"
+msgstr "Avertisment de curățare: {}"
+
+#: ui/main_window.py:61
+msgid "Run WebApp"
+msgstr "Lansare WebApp"
+
+#: ui/main_window.py:78
+msgid "Delete WebApp"
+msgstr "Șterge WebApp"
+
+#: ui/main_window.py:189
+msgid "Ready - {desktop} on {protocol}"
+msgstr "Gata - {desktop} pe {protocol}"
+
+#: ui/dialogs/add_webapp_dialog.py:56
+msgid "Network"
+msgstr "Internet"
+
+#: ui/dialogs/add_webapp_dialog.py:57
+msgid "Game"
+msgstr "Jocuri"
+
+#: ui/dialogs/add_webapp_dialog.py:58
+msgid "Office"
+msgstr "Birou"
+
+#: ui/dialogs/add_webapp_dialog.py:59
+msgid "AudioVideo"
+msgstr "Sunet și Video"
+
+#: ui/dialogs/add_webapp_dialog.py:60
+msgid "Development"
+msgstr "Dezvoltare"
+
+#: ui/dialogs/add_webapp_dialog.py:61
+msgid "Utility"
+msgstr "Utilități"

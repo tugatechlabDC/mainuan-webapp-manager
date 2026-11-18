@@ -1,0 +1,195 @@
+# French translations for PACKAGE package.
+# Copyright (C) 2026 THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# Automatically generated, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-10 16:10+0100\n"
+"PO-Revision-Date: 2026-03-04 13:00+0100\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: main.py:60
+msgid "Starting Mainuan WebApp Manager..."
+msgstr "Démarrage du Gestionnaire WebApp Mainuan..."
+
+#: ui/main_window.py:118
+msgid "Add WebApp"
+msgstr "Ajouter une WebApp"
+
+#: ui/main_window.py:125
+msgid "Remove WebApp"
+msgstr "Supprimer WebApp"
+
+#: ui/main_window.py:150
+msgid ""
+"No WebApps installed.\n"
+"Click the '+' button to add one."
+msgstr ""
+"Aucune WebApp installée.\n"
+"Cliquez sur le bouton '+' pour en ajouter une."
+
+#: ui/main_window.py:213
+msgid "Edit WebApp"
+msgstr "Modifier la WebApp"
+
+#: ui/main_window.py:235 ui/dialogs/add_webapp_dialog.py:35
+msgid "Name:"
+msgstr "Nom :"
+
+#: ui/main_window.py:241 ui/dialogs/add_webapp_dialog.py:42
+msgid "Web Address:"
+msgstr "Adresse Web :"
+
+#: ui/main_window.py:256 ui/dialogs/add_webapp_dialog.py:47
+msgid "Select Icon"
+msgstr "Sélectionner une icône"
+
+#: ui/main_window.py:259 ui/dialogs/add_webapp_dialog.py:143
+msgid "Select an icon"
+msgstr "Sélectionnez une icône"
+
+#: ui/main_window.py:268 ui/dialogs/add_webapp_dialog.py:153
+msgid "Images (PNG, SVG, JPG)"
+msgstr "Images (PNG, SVG, JPG)"
+
+#: ui/main_window.py:284 ui/dialogs/add_webapp_dialog.py:49
+msgid "Icon:"
+msgstr "Icône :"
+
+#: ui/main_window.py:297 ui/dialogs/add_webapp_dialog.py:69
+msgid "Browser:"
+msgstr "Navigateur :"
+
+#: ui/main_window.py:304 ui/dialogs/add_webapp_dialog.py:76
+msgid "Navigation Bar:"
+msgstr "Barre de navigation :"
+
+#: ui/main_window.py:311 ui/dialogs/add_webapp_dialog.py:83
+msgid "Incognito Mode:"
+msgstr "Mode incognito :"
+
+#: ui/main_window.py:317 ui/dialogs/add_webapp_dialog.py:89
+msgid "Extra Parameters:"
+msgstr "Paramètres supplémentaires :"
+
+#: ui/main_window.py:324 ui/dialogs/add_webapp_dialog.py:96
+msgid "Common Parameters Help"
+msgstr "Aide sur les paramètres communs"
+
+#: ui/main_window.py:327 ui/dialogs/add_webapp_dialog.py:106
+msgid "Forces the WebApp to occupy the full screen at startup."
+msgstr "Force l'application Web à occuper tout l'écran au démarrage."
+
+#: ui/main_window.py:328 ui/dialogs/add_webapp_dialog.py:107
+msgid ""
+"Prevents floating bubbles when hovering over tabs (very useful in WebApp "
+"mode)."
+msgstr ""
+"Empêche les bulles flottantes lors du survol des onglets (très utile en mode "
+"WebApp)."
+
+#: ui/main_window.py:329 ui/dialogs/add_webapp_dialog.py:108
+msgid ""
+"Forces the website to render in dark mode, even if not natively supported."
+msgstr ""
+"Force le rendu du site Web en mode sombre, même s'il n'est pas pris en "
+"charge nativement."
+
+#: ui/main_window.py:330 ui/dialogs/add_webapp_dialog.py:109
+msgid "Simulate a different browser or device."
+msgstr "Simule un navigateur ou un appareil différent."
+
+#: ui/main_window.py:331 ui/dialogs/add_webapp_dialog.py:110
+msgid "Use a specific proxy for this WebApp."
+msgstr "Utilise un proxy spécifique pour cette application Web."
+
+#: ui/main_window.py:332 ui/dialogs/add_webapp_dialog.py:111
+msgid "Set a fixed window size."
+msgstr "Définit une taille de fenêtre fixe."
+
+#: ui/main_window.py:333 ui/dialogs/add_webapp_dialog.py:112
+msgid "Disable all website notifications."
+msgstr "Désactive toutes les notifications du site Web."
+
+#: ui/main_window.py:334 ui/dialogs/add_webapp_dialog.py:113
+msgid "Increase shared memory (useful for heavy apps in containers)."
+msgstr ""
+"Augmente la mémoire partagée (utile pour les applications lourdes en "
+"conteneurs)."
+
+#: ui/main_window.py:341 ui/dialogs/add_webapp_dialog.py:121
+msgid "Browser Parameters Help"
+msgstr "Aide sur les paramètres du navigateur"
+
+#: ui/main_window.py:385
+msgid "Are you sure you want to delete {}?"
+msgstr "Êtes-vous sûr de vouloir supprimer {} ?"
+
+#: ui/main_window.py:387
+msgid "This will remove its .desktop file and the isolated browser profile."
+msgstr "Cela supprimera son fichier .desktop et le profil de navigateur isolé."
+
+#: ui/dialogs/add_webapp_dialog.py:34
+msgid "e.g. YouTube"
+msgstr "ex. YouTube"
+
+#: ui/dialogs/add_webapp_dialog.py:59
+msgid "Category:"
+msgstr "Catégorie :"
+
+#: ui/dialogs/add_webapp_dialog.py:88
+msgid "e.g. --start-maximized"
+msgstr "p. ex. --start-maximized"
+
+#: main.py:81
+msgid "Shutting down Mainuan WebApp Manager..."
+msgstr "Fermeture du Gestionnaire WebApp Mainuan..."
+
+#: main.py:96
+msgid "Cleanup warning: {}"
+msgstr "Avertissement de nettoyage : {}"
+
+#: ui/main_window.py:61
+msgid "Run WebApp"
+msgstr "Lancer la WebApp"
+
+#: ui/main_window.py:78
+msgid "Delete WebApp"
+msgstr "Supprimer la WebApp"
+
+#: ui/main_window.py:189
+msgid "Ready - {desktop} on {protocol}"
+msgstr "Prêt - {desktop} sur {protocol}"
+
+#: ui/dialogs/add_webapp_dialog.py:56
+msgid "Network"
+msgstr "Internet"
+
+#: ui/dialogs/add_webapp_dialog.py:57
+msgid "Game"
+msgstr "Jeux"
+
+#: ui/dialogs/add_webapp_dialog.py:58
+msgid "Office"
+msgstr "Bureautique"
+
+#: ui/dialogs/add_webapp_dialog.py:59
+msgid "AudioVideo"
+msgstr "Son et vidéo"
+
+#: ui/dialogs/add_webapp_dialog.py:60
+msgid "Development"
+msgstr "Développement"
+
+#: ui/dialogs/add_webapp_dialog.py:61
+msgid "Utility"
+msgstr "Utilitaires"

@@ -1,0 +1,139 @@
+"""
+Environment detection module for Mainuan WebApp Manager.
+Following the official Mainuan standards.
+"""
+
+import os
+import subprocess
+from enum import Enum
+from typing import Dict
+
+class DesktopEnvironment(Enum):
+    """Supported desktop environments."""
+    GNOME = "gnome"
+    KDE = "kde"
+    XFCE = "xfce"
+    UNKNOWN = "unknown"
+
+class ThemeType(Enum):
+    """Theme variants."""
+    DARK = "dark"
+    LIGHT = "light"
+
+class DisplayProtocol(Enum):
+    """Display server protocols."""
+    X11 = "x11"
+    WAYLAND = "wayland"
+    UNKNOWN = "unknown"
+
+class EnvironmentDetector:
+    """
+    Detects and analyzes the current desktop environment and display protocol.
+    """
+    
+    def __init__(self):
+        self._desktop_env = None
+        self._display_protocol = None
+        
+    def detect_all(self) -> Dict[str, str]:
+        """Performs complete environment detection."""
+        self._detect_desktop_environment()
+        self._detect_display_protocol()
+        
+        return {
+            'desktop_environment': self._desktop_env.value,
+            'display_protocol': self._display_protocol.value,
+            'theme_type': self._detect_theme_type()
+        }
+    
+    def _detect_theme_type(self) -> str:
+        """Detect whether the current GTK theme is dark or light."""
+        # 1. Explicit override via env var
+        mainuan_hint = os.environ.get('MAINUAN_THEME_TYPE', '').lower()
+        if mainuan_hint in ('dark', 'light'):
+            return mainuan_hint
+
+        # 2. Use Gtk.Settings — works on ALL DEs (GNOME, KDE, XFCE, etc.)
+        try:
+            import gi
+            gi.require_version('Gtk', '3.0')
+            from gi.repository import Gtk
+            settings = Gtk.Settings.get_default()
+            if settings:
+                # Check prefer-dark property first (explicit dark mode flag)
+                prefer_dark = settings.get_property('gtk-application-prefer-dark-theme')
+                if prefer_dark:
+                    return ThemeType.DARK.value
+                # Check theme name for "dark" keyword
+                theme_name = settings.get_property('gtk-theme-name') or ''
+                if 'dark' in theme_name.lower():
+                    return ThemeType.DARK.value
+                # Theme name found and doesn't contain dark → light
+                if theme_name:
+                    return ThemeType.LIGHT.value
+        except Exception:
+            pass
+
+        # 3. GTK_THEME env var fallback
+        gtk_theme = os.environ.get('GTK_THEME', '').lower()
+        if gtk_theme:
+            return ThemeType.DARK.value if 'dark' in gtk_theme else ThemeType.LIGHT.value
+
+        # 4. Default: dark (Mainuan default theme is dark)
+        return ThemeType.DARK.value
+    
+    def _detect_desktop_environment(self) -> DesktopEnvironment:
+        """Detects the current desktop environment."""
+        current_desktop = os.environ.get('XDG_CURRENT_DESKTOP', '').lower()
+        
+        if 'gnome' in current_desktop:
+            self._desktop_env = DesktopEnvironment.GNOME
+        elif 'kde' in current_desktop or 'plasma' in current_desktop:
+            self._desktop_env = DesktopEnvironment.KDE
+        elif 'xfce' in current_desktop:
+            self._desktop_env = DesktopEnvironment.XFCE
+        else:
+            self._desktop_env = self._fallback_desktop_detection()
+        
+        return self._desktop_env
+    
+    def _fallback_desktop_detection(self) -> DesktopEnvironment:
+        """Fallback method for desktop environment detection."""
+        if os.environ.get('GNOME_DESKTOP_SESSION_ID'):
+            return DesktopEnvironment.GNOME
+        elif os.environ.get('KDE_SESSION_VERSION'):
+            return DesktopEnvironment.KDE
+        return DesktopEnvironment.UNKNOWN
+    
+    def _detect_display_protocol(self) -> DisplayProtocol:
+        """Detects the display server protocol (X11 or Wayland)."""
+        session_type = os.environ.get('XDG_SESSION_TYPE', '').lower()
+        
+        if session_type == 'wayland':
+            self._display_protocol = DisplayProtocol.WAYLAND
+        elif session_type == 'x11' or os.environ.get('DISPLAY'):
+            self._display_protocol = DisplayProtocol.X11
+        else:
+            self._display_protocol = DisplayProtocol.UNKNOWN
+            
+        return self._display_protocol
+
+    @property
+    def desktop_environment(self) -> DesktopEnvironment:
+        if self._desktop_env is None:
+            self._detect_desktop_environment()
+        return self._desktop_env
+
+    @property
+    def display_protocol(self) -> DisplayProtocol:
+        if self._display_protocol is None:
+            self._detect_display_protocol()
+        return self._display_protocol
+
+_environment_detector = None
+
+def get_environment_detector() -> EnvironmentDetector:
+    global _environment_detector
+    if _environment_detector is None:
+        _environment_detector = EnvironmentDetector()
+    return _environment_detector
