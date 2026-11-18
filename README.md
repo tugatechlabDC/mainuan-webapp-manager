@@ -1,15 +1,24 @@
-# Mainuan WebApp Manager
+<div align="center">
 
 ![Mainuan WebApp Manager Icon](assets/icons/128x128/org.mainuan.webappmanager.png)
 
+# Mainuan WebApp Manager
+
+[![License: GPL-3.0+](https://img.shields.io/badge/License-GPL--3.0%2B-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![Version](https://img.shields.io/badge/version-1.0.1-green.svg)]()
+
 **Mainuan WebApp Manager** is an elegant, lightweight Site Specific Browser (SSB) engine tailored for Mainuan Linux. It effortlessly turns any website into a standalone, desktop-integrated application utilizing isolated browser profiles for maximum privacy and separation from your primary web session.
+
+WebApp integration manager for Mainuan Linux.
+
+</div>
 
 ## Screenshots
 
 <div align="center">
   <img src="assets/screenshots/screenshot1.png" width="30%" alt="Main Window"/>
-  <img src="assets/screenshots/screenshot2.png" width="30%" alt="Creation Dialog"/>
-  <img src="assets/screenshots/screenshot3.png" width="30%" alt="WebApp Running"/>
+  <img src="assets/screenshots/screenshot2.png" width="30%" alt="Add button"/>
+  <img src="assets/screenshots/screenshot3.png" width="30%" alt="Creation Dialog"/>
 </div>
 
 ## Features
@@ -18,10 +27,10 @@
 - ✏️ **Full WebApp Editing**: Reconfigure Name, URL, Icon, and Browser settings at any time without recreating the profile.
 - ⚙️ **Extra Browser Parameters**: Add custom flags like `--start-maximized` or `--kiosk` with a new built-in help guide.
 - 🔒 **Total Isolation & Incognito**: Generates sandboxed profiles and supports Incognito mode sessions.
-- 🎨 **Mainuan UI Integration**: Official status bar with automatic detection of DE (GNOME/Plasma/XFCE) and protocol (Wayland/X11).
+- 🎨 **Mainuan UI Integration**: Official status bar with automatic detection of DE (Plasma) and protocol (Wayland/X11).
 - 🧩 **No-UI Implementation**: Customized Firefox launch using `userChrome.css` and dynamic StartupWMClass mapping.
 - 🤖 **Smart Favicons**: HD icons automatically downloaded via Google Favicon API. 
-- 🌍 **Internationalization**: Ships translated out-of-the-box for `es, en, fr, de, pt, it, ro, ru`.
+- 🌍 **Internationalization**: Ships translated out-of-the-box for `pt-PT, pt-BR, es, en, fr, de, it, ro, ru`.
 
 ## Requirements
 
@@ -32,12 +41,25 @@
 
 ## Installation
 
-Install the provided `.deb` package, or run directly from the source folder:
+The Mainuan Webapp Manager is already installed on the Mainuan Linux ISO or available on the Mainuan Store.
+
+On another Kubuntu/Ubuntu 26.04 system, download the `.deb` and the `SHA256SUMS` from
+[latest release](https://github.com/mainuan/mainuan-webapp-manager/releases/latest),
 
 ```bash
+sha256sum --check --ignore-missing SHA256SUMS
+sudo apt install ./mainuan-webapp-manager_1.0.1.deb
+
+```bash
+git clone https://github.com/mainuan/mainuan-webapp-manager.git
 cd mainuan-webapp-manager
 python3 main.py
 ```
+
+Open **Mainuan Webapp Manager** from your application menu (under the System/Settings category) or run:
+
+```bash
+mainuan-webapp-manager
 
 ## Structure
 
@@ -51,40 +73,19 @@ mainuan-webapp-manager/
 └── utils/            # Shared utilities (Favicon Fetcher)
 ```
 
-## 🆕 New in version 1.0.0-5 (July 7, 2026)
+## 🆕 New in version 1.0.1 (November 17, 2026)
 
-- **Build**: Build dependency `python3-all` replaced with `python3`.
+## Contributing
 
-## 🆕 New in version 1.0.0-4 (April 30, 2026)
+Report issues in [Issues](https://github.com/mainuan/mainuan-webapp-manager/issues)
+and submit changes via pull request to the `main` branch. Every PR must pass the
+[CI](https://github.com/mainuan/mainuan-webapp-manager/actions/workflows/ci.yml)
+checks, which must all be green (passing). Document any visible changes in
+[CHANGELOG.md](CHANGELOG.md) and `debian/changelog`.
 
-- **UI**: Simplified the footer UI text to match the modern Mainuan standard layout (`XFCE · X11`).
-- **Icon Persistence**: WebApp icons are now saved permanently, preventing loss after system cache cleanups.
-- **Theme Support**: The application now seamlessly respects the system's light or dark theme preference, removing the forced dark mode.
+## Créditos
 
-## 🆕 New in version 1.0.0-3 (March 22, 2026)
-
-- **UI colors**: Fixed background color inconsistency — window and list now use the correct Mainuan dark theme color (#2b2b2b).
-
-## New in version 1.0.0-2 (March 21, 2026)
-
-- **About dialog**: Press F1 or use the GNOME application menu to open the About dialog.
-
-## New in version 1.0.0-1 (March 10, 2026)
-
-- **Official Mainuan Footer**: Implemented a standard status bar following the Mainuan ecosystem standard.
-- **Environment Detection**: Added automatic identification of Desktop Environment (GNOME, Plasma, XFCE) and Protocol (Wayland, X11).
-- **Incognito Mode**: New support for private browsing sessions with fully isolated profiles.
-- **Extended Parameters Help**: Added a comprehensive guide for advanced browser flags and parameters.
-- **UI Alignment**: Consistent use of `dim-label` styling and standard margins for seamless transition between Mainuan apps.
-
-## New in version 1.0.0 (March 4, 2026)
-
-- **Full WebApp Editing**: Users can edit Name, URL, Icon, Browser, and Navigation Bar settings for existing WebApps.
-- **Extra Browser Parameters**: Support for custom browser flags (e.g., `--start-maximized`, `--kiosk`) at creation and editing.
-- **Improved Wayland Compatibility**: Enhanced icon mapping and window association for KDE Plasma 6 and other modern environments.
-- **Independent Firefox Instances**: Optimized Firefox SSB behavior with truly isolated processes and dedicated icons.
-- **Smart Favicons**: Fallback mechanism to download high-quality website icons via Google Favicons API.
-- **Full Internationalization (i18n)**: Translation ready for the 8 default languages in Mainuan Linux.
+- David Caixinha ([@tugatechlabDC](https://github.com/tugatechlabDC)): developer and maintainer of the package (`debian/control`).
 
 ## License
 This project is licensed under the GPL-3.0 License - see the [LICENSE](LICENSE) file for details.
