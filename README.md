@@ -55,22 +55,12 @@ git clone https://github.com/mainuan/mainuan-webapp-manager.git
 cd mainuan-webapp-manager
 python3 main.py
 ```
+## Usage
 
 Open **Mainuan Webapp Manager** from your application menu (under the System/Settings category) or run:
 
 ```bash
 mainuan-webapp-manager
-
-## Structure
-
-```
-mainuan-webapp-manager/
-├── assets/           # Icons and Desktop elements
-├── core/             # Background logic (Profile generation, Binary detection)
-├── debian/           # Deb packaging data
-├── locale/           # Translation MO/PO strings
-├── ui/               # GTK3 Interface
-└── utils/            # Shared utilities (Favicon Fetcher)
 ```
 
 ## 🆕 New in version 1.0.1 (November 17, 2026)
@@ -87,5 +77,5 @@ checks, which must all be green (passing). Document any visible changes in
 
 - David Caixinha ([@tugatechlabDC](https://github.com/tugatechlabDC)): developer and maintainer of the package (`debian/control`).
 
-## License
-This project is licensed under the GPL-3.0 License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the GPL-3.0 License — see the `debian/copyright` file for details.
+
